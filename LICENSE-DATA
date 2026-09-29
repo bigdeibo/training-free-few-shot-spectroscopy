@@ -1,0 +1,43 @@
+Data licence: Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 Purification Equipment Research Institute of CSSC, Handan,
+China. This institute is the licensor for the data listed below.
+
+Applies to the data this work produced and distributes with this repository:
+
+  data/corpus/                 the simulated half of the unlabeled corpus, and
+                               the recipe for the whole of it
+  data/in-house-pentane-ccl4/  the FT-NIR pentane/CCl4 series measured here
+  data/simulated-fuel/         the simulated fuel spectra and the peak table
+  data/encoder-checkpoints/    the two self-supervised encoders
+  data/derived/                the reduced near-infrared arm of the edible-oil
+                               data, redistributed under its own CC BY 4.0
+                               source terms
+  results/                     every per-repetition result file
+
+You are free to share and to adapt this data for any purpose, including
+commercially, provided you give appropriate credit, link to the licence and
+indicate if changes were made. Attribute it to the institute named above, and
+cite the manuscript this repository accompanies, or the repository itself until
+the manuscript appears.
+
+The full legal code is the licence text published at
+
+  https://creativecommons.org/licenses/by/4.0/legalcode
+
+and the human-readable summary at
+
+  https://creativecommons.org/licenses/by/4.0/
+
+Not covered by this licence:
+
+  - The source code under `code/`, which is under the MIT licence in `LICENSE`.
+  - The public datasets the work was evaluated on. None of them is
+    redistributed here except the reduced edible-oil file named above. The
+    simulated half of the corpus is generated and nothing in it is copied, but
+    its mixture library is built from the NIST infrared collection and from
+    class means of two public datasets, so this licence covers the generated
+    spectra and not the sources they derive from. Each source remains under the
+    terms listed in `data/sources/README.md`, and reuse of it is governed by
+    those terms, not by this one.
+  - The foundation-model weights, which are not distributed here at all.

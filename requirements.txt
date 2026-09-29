@@ -1,0 +1,52 @@
+# Dependencies for the code under code/.
+#
+# The lower bounds are floors rather than tested minima: the code uses
+# long-standing APIs from each library. One bound is a real constraint rather
+# than a floor, and it is numpy 2, for the trapezoidal integration in
+# code/trust_layer/run_physics_gate.py. The versions in the trailing comments
+# are the ones the results in this package were produced with. Install those to
+# check a number in the paper; install anything newer to rerun the pipeline.
+#
+#   pip install -r requirements.txt
+
+numpy>=2.0             # 2.4.4, np.trapezoid
+pandas>=2.0            # 3.0.2
+scipy>=1.11            # 1.17.1
+scikit-learn>=1.4      # 1.8.0
+torch>=2.0             # 2.12.1+cu126
+PyWavelets>=1.5        # 1.10.0, wavelet scattering in code/common/features.py
+pillow>=10.0           # 12.2.0, image reading in
+                       # code/corpus_augmentation/run_digitize_components.py
+
+# Both are used by code/common/datasets.py: openpyxl reads the edible-oil
+# spreadsheet, pyarrow reads the parquet files a projection is fitted on. pandas
+# pulls both in on most installs, so they may already be present, but neither is
+# a hard dependency of pandas and both are named here to be safe.
+openpyxl>=3.0          # 3.1.5, pd.read_excel
+pyarrow>=12.0          # 25.0.1, pd.read_parquet
+
+# The foundation model. Its licence is non-commercial and it is not
+# redistributed with this package: install it and let it fetch its own
+# checkpoints, then point the loaders at them.
+#
+#   pip install "tabpfn>=2.0"
+#   export SPEC_TABPFN_MODELS=/path/to/tabpfn-checkpoints
+#
+# code/common/paths.py lists the three checkpoint file names the loaders expect.
+# The generations are the ones the paper calls TabPFN v2.5, v3 and v3.5; not
+# every result family uses all three, and each result file names the generation
+# behind it. Without the weights the trust-layer and representation results
+# cannot be rerun, but every number in them is present in results/ as shipped.
+#
+# Only release 9.0.0 was verified here. The code constructs its estimators with
+# a `model_path` argument; if an older release rejects that argument, install a
+# current one.
+tabpfn>=2.0            # 9.0.0
+
+# Optional. Only data/sources/build_derived_arrays.py needs it, to unpack the
+# Kalivas gasoline and mayonnaise arrays from the R `pls` package. R itself is
+# not required.
+#
+#   pip install pyreadr
+#
+# pyreadr>=0.5

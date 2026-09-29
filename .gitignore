@@ -1,0 +1,29 @@
+# The public datasets are fetched, not committed. See data/sources/README.md.
+data/public/
+
+# The whole corpus, assembled locally rather than shipped: the archive carries
+# the simulated half only. See data/corpus/recipe.json for the digests.
+data/corpus/spectra.npy
+data/corpus/provenance.csv
+
+# The foundation-model weights have no default location and are not committed.
+models/
+*.ckpt
+*.safetensors
+
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# LaTeX and figure intermediates, if a reader builds them locally.
+*.aux
+*.log
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.blg
+*.bbl
+
+.DS_Store
+Thumbs.db
