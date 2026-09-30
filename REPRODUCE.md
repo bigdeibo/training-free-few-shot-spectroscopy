@@ -42,7 +42,7 @@ Section S2 was being typeset, from the corpus. The script that computes them is
 part of the typesetting chain and is not in this package, so a reader has the
 corpus but not these two numbers without recomputing a PCA of it.
 
-The fidelity numbers of Supplementary Figure S9, the median NNLS residual and
+The fidelity numbers of Supplementary Figure S1, the median NNLS residual and
 the three reconstruction errors, are printed by
 `code/corpus_augmentation/run_simulate_corpus.py`. That script ships, and
 re-running it against the fuel Raman data reproduces them, but it writes no file
