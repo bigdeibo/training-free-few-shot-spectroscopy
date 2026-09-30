@@ -134,7 +134,7 @@ Single-modality arms use their modality name in lower case (`nir`, `mir`,
 | `repetition` | repetition index, `rep` in the paper |
 | `n_features` | dimension of the representation fed to the head |
 | `r2` | coefficient of determination on the query set |
-| `r2_evaluation` | coefficient of determination on the evaluation half |
+| `r2_evaluation` | coefficient of determination on the evaluation half in `posterior-audit/`, on the whole test set in `physics-gate/` (see REPRODUCE, *Two definitions of `r2_evaluation`*) |
 | `rmse` | root-mean-square error |
 | `rpd` | ratio of performance to deviation |
 | `seconds` | wall-clock time for the cell, in seconds |

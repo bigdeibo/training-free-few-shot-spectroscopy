@@ -53,7 +53,7 @@ MENDELEY = {
 SUGAR_RECORD = "10779223"          # the Raman sugar-mixture measurement data
 # ---------------------------------------------------------------- hugging face
 FUEL_DATASETS = {"Benchtop": "chlange/FuelRamanSpectraBenchtop",
-                 "Handheld": "chlange/FuelRamanSpectraHandheld"}
+                 "Handheld": "HTW-KI-Werkstatt/FuelRamanSpectraHandheld"}
 
 MANUAL = """
 Four items cannot be fetched by a script.

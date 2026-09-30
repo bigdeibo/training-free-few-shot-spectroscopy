@@ -64,6 +64,15 @@ holds the two split functions. The trust-layer scripts draw their internal
 calibration and evaluation splits from their own families, disjoint from these,
 and each script's docstring names them.
 
+**Two definitions of `r2_evaluation`.** Both trust-layer files carry a column of
+that name, and they do not agree cell for cell. `posterior-audit/` reports R² on
+the evaluation half of the conformal split, because the other half is spent on
+calibration; `physics-gate/` reports it on the whole test set, because its label
+must be fixed before the score is ranked. The paper's gate numbers and failure
+rates come from `physics-gate/`, and its coverage and width numbers from
+`posterior-audit/`; no printed quantity mixes the two. Do not merge the two
+files on `r2_evaluation`.
+
 **Group-aware splits.** Where spectra are replicate measurements of a physical
 sample, support spectra are drawn one per sample and every replicate of those
 samples is excluded from the query set. This applies to the olive-oil,
