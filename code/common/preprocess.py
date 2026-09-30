@@ -10,8 +10,17 @@ import numpy as np
 
 
 def snv(X):
-    """Standard normal variate transform, applied to each spectrum independently."""
-    m = X.mean(axis=1, keepdims=True)
-    s = X.std(axis=1, keepdims=True)
-    s[s == 0] = 1.0
-    return (X - m) / s
+    """Standard normal variate transform, applied to each spectrum independently.
+
+    Evaluated in single precision, with the guard added to the standard
+    deviation instead of special-cased after it, because this is the
+    arithmetical path every result CSV here was produced by. The double
+    precision form of the same transform is algebraically identical and shifts
+    each spectrum by one unit in the last place; that is enough to move a
+    two-support-set TabPFN fit, where the in-context regression is close to
+    singular, by several thousandths of R-squared. Use this form to reproduce
+    the shipped numbers.
+    """
+    X = np.asarray(X, dtype=np.float32)
+    return (X - X.mean(axis=-1, keepdims=True)) / \
+        (X.std(axis=-1, keepdims=True) + 1e-8)

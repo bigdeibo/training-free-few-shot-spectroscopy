@@ -244,6 +244,16 @@ stops at five repetitions, so the comparison in the caption is a paired Wilcoxon
 signed-rank of k-center against random over 13 tasks times five repetitions,
 n = 65.
 
+The pairing is a property of the data, not of the analysis: within a
+(task, repetition) block the three strategies are grown from one shared seed
+support set, so their increments are correlated with the alternative they are
+tested against. You can check it directly — at `support_size` 2 the three
+strategies hold the same support set and every `r2` value is identical across
+`random`, `k-center-diversity` and `interval-width`, for each of the 13 tasks
+times five repetitions. Run the paired test only on blocks that satisfy this;
+if the arms are ever drawn independently, the same test is invalid and the
+difference has to be tested unpaired instead.
+
 ### Figure 5a — the budget curve
 
 | | |
@@ -400,14 +410,36 @@ this archive alone.
 pip install -r requirements.txt
 export SPEC_DATA_ROOT=/path/to/public-datasets     # see data/sources/README.md
 export SPEC_TABPFN_MODELS=/path/to/tabpfn-checkpoints
+python code/corpus_augmentation/run_build_corpus.py   # one step first: see README.md
 python code/representation_comparison/run_representation_comparison.py
 ```
+
+The corpus step comes first because the projection most arms are fitted on is
+read from `data/corpus/spectra.npy`, and this archive ships only the simulated
+half of that corpus. `run_build_corpus.py` completes it from the public
+datasets under `SPEC_DATA_ROOT`. The families that use no corpus projection run
+without it.
 
 Each script writes one CSV per (task, support size, repetition, arm) under
 `results/`, and each takes an `--help` that lists its own options. The scripts
 are resumable: a row already present in the target file is skipped, so an
 interrupted run can be restarted. To force a cell to be recomputed, delete its
 row from the file or move the file aside.
+
+**A rerun reproduces the shipped tables.** The spectra load in single
+precision, and every transform, standardisation and fit here is evaluated in
+the precision it is handed: the scripts carry single precision through and
+widen nothing to double on the way in. Widening is the same transform, and on
+a spectrum the two differ by about one part in a million. It is not negligible
+at this support size, because the head is sometimes fitted on two spectra,
+where the in-context regression is close to singular and a difference of that
+order moves a cell whose R² is far below zero by several hundredths.
+The claim was checked by re-running two families and comparing cell by cell:
+`results/sample-selection/diesel-cetane-number.csv`, a TabPFN head at support
+sizes 2 to 20 over five repetitions, and
+`results/ridge-jackknife/ridge-jackknife__diesel-cetane-number.csv`, a
+closed-form ridge with jackknife+ intervals over 150 rows. Both reproduce to
+the last stored digit; the `seconds` column is wall-clock time and will not.
 
 Every script runs on a GPU when one is visible and falls back to the CPU
 otherwise. The `seconds` column of every result file records the wall-clock time

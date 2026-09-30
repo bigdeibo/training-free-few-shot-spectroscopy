@@ -92,7 +92,7 @@ def main():
     for name in names:
         kind, tag = DATASETS[name]
         d = load_sugar_raman(tag) if kind == "sugar" else load_fuel_raman(tag)
-        X = np.asarray(d["X"], dtype=float)
+        X = np.asarray(d["X"])
         groups = np.asarray(d["groups"])
         F = PCA(n_components=min(N_COMPONENTS, len(X) - 1),
                 random_state=0).fit_transform(X)

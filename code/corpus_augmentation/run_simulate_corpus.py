@@ -118,7 +118,7 @@ def main(force=False):
               "them; pass --force if that is what you intend.")
 
     wavenumbers, real = (lambda d: (np.asarray(d["wavelengths"], dtype=float),
-                                    np.asarray(d["X"], dtype=float)))(
+                                    np.asarray(d["X"])))(
         load_fuel_raman("Benchtop"))
     peaks = pd.read_csv(lib / "peaks.csv")
 

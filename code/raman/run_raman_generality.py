@@ -77,7 +77,7 @@ def main():
             d = load_sugar_raman(tag)
         else:
             d = load_fuel_raman(tag)
-        X = np.asarray(d["X"], dtype=float)
+        X = np.asarray(d["X"])
         groups = np.asarray(d["groups"])
         F = PCA(n_components=min(N_COMPONENTS, len(X) - 1),
                 random_state=0).fit_transform(X)

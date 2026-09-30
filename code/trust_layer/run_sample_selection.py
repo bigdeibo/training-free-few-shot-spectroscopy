@@ -93,7 +93,7 @@ def main():
 
     for task in tasks:
         d = load_task(task)
-        X = np.asarray(d["X"], dtype=float)
+        X = np.asarray(d["X"])
         y = np.asarray(d["y"], dtype=np.float64)
         n = len(y)
         F = corpus_pca(X, N_COMPONENTS)
@@ -110,14 +110,29 @@ def main():
                                             replace=False)]
             F_cand, F_test = F[cand], F[test]
             y_test = y[test]
-            rng = np.random.default_rng(66000 + 900 + rep)
 
-            for strategy in STRATEGIES:
+            # Seed support set, drawn once per (task, repetition) and shared by
+            # every strategy, so that the arms are paired: their increments are
+            # then correlated with the alternatives they are compared against,
+            # and a paired test on the differences answers the question the
+            # comparison is meant to ask. Drawing the seed independently inside
+            # the strategy loop instead leaves the arms unpaired, which silently
+            # invalidates any paired statistic computed from the output; at
+            # K = SEED_SIZE that defect also produces non-zero differences
+            # between arms that hold the same support set by construction.
+            seed_support = list(np.random.default_rng(66000 + 900 + rep)
+                                .choice(len(cand), size=SEED_SIZE,
+                                        replace=False))
+
+            for si, strategy in enumerate(STRATEGIES):
                 if (rep, strategy) in done:
                     continue
                 t0 = time.time()
-                support = list(rng.choice(len(cand), size=SEED_SIZE,
-                                          replace=False))
+                # Per-strategy stream: reproducible, and independent of which
+                # strategies have already been evaluated. 7 * si keeps the
+                # streams disjoint across arms within a repetition.
+                rng = np.random.default_rng(66100 + 900 + rep + 7 * si)
+                support = list(seed_support)
                 pool = [i for i in range(len(cand)) if i not in support]
                 rows = []
 

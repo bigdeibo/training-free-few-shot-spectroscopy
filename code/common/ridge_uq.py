@@ -42,7 +42,11 @@ def ridge_solve(Phi, y, lam, fit_intercept=True):
     """Solve min ||Phi w - y||^2 + lam ||w||^2 in closed form.
 
     Phi is (K, p) support embeddings, scale-only normalised per the note above
-    and deliberately *not* mean-centred; y is the z-scored support labels.
+    and deliberately *not* mean-centred; y is the support labels. They may be
+    given on any linearly rescaled scale, raw physical units or z-scored: with
+    the intercept unpenalised, y = s*y' + m gives
+    ||Phi w + b - y||^2 + lam||w||^2 = s^2 (||Phi w' + b' - y'||^2 + lam||w'||^2),
+    so the selected penalty is scale-invariant. Callers here pass raw labels.
     Returns the coefficients, the inverse of the normal matrix, and the diagonal
     of the hat matrix.
     """
@@ -79,9 +83,9 @@ def loo_lambda(Phi, y, grid=None):
 def jackknife_plus_interval(Phi, y, lam, Phi_q, alpha, fit_intercept=True):
     """Jackknife+ prediction intervals for the query embeddings `Phi_q`.
 
-    Returns `(lo, hi, info)` on the z-scored label scale; callers undo the
-    z-scoring. At K = 5 the interval endpoints sit on a five-point grid, which
-    is a property of the method and is reported as such.
+    Returns `(lo, hi, info)` on the label scale of the `y` passed in. At K = 5
+    the interval endpoints sit on a five-point grid, which is a property of the
+    method and is reported as such.
     """
     w, Ainv, h, r_loo = loo_quantities(Phi, y, lam, fit_intercept)
     Phi_a = np.column_stack([np.ones(len(Phi)), Phi]) if fit_intercept else Phi

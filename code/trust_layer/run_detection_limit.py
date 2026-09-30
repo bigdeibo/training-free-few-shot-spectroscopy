@@ -54,7 +54,7 @@ def main():
     print(f"[detection-limit] device={device}", flush=True)
 
     d = load_task(TASK)
-    X = np.asarray(d["X"], dtype=float)
+    X = np.asarray(d["X"])
     y = np.asarray(d["y"], dtype=float)
     groups = d["groups"]
     F = corpus_pca(X, N_COMPONENTS)

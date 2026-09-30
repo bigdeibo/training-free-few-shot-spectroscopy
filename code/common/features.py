@@ -69,6 +69,13 @@ def corpus_pca(X, n_components, fit_on=None):
     which is how the corpus-size saturation curve is drawn. The subsample is
     drawn without replacement from a seed that depends only on its size, so the
     same subspace is used for every task at a given size.
+
+    The caller's floating-point precision is carried through the projection.
+    The spectra load in single precision and the benchmark projected them as
+    they loaded, so evaluating the same projection in double shifts every score
+    by about one part in a million relative to the shipped tables, which the
+    small-support fits below then amplify. Pass a double-precision array to get
+    a double-precision projection.
     """
     key = (n_components, fit_on)
     if key not in _pca_cache:
@@ -78,7 +85,10 @@ def corpus_pca(X, n_components, fit_on=None):
             rng = np.random.default_rng(66000 + fit_on)
             corpus = corpus[rng.choice(len(corpus), size=fit_on, replace=False)]
         _pca_cache[key] = PCA(n_components=n_components, random_state=0).fit(corpus)
-    return _pca_cache[key].transform(np.asarray(X, dtype=float))
+    X = np.asarray(X)
+    if not np.issubdtype(X.dtype, np.floating):
+        X = X.astype(float)
+    return _pca_cache[key].transform(X)
 
 
 def wavelet_scattering(X):
@@ -89,7 +99,7 @@ def wavelet_scattering(X):
     becomes fifteen numbers. Training-free and shift-stable.
     """
     import pywt
-    X = np.asarray(X, dtype=float)
+    X = np.asarray(X)
     scales = 2.0 ** np.arange(1, 6)
     wavelet = "cmor1.5-1.0"
     first = [np.abs(pywt.cwt(X, [s], wavelet, axis=1)[0][0]) for s in scales]
@@ -110,7 +120,7 @@ def random_projection(X, n_components=100, seed=RANDOM_PROJECTION_SEED):
     rng = np.random.default_rng(seed)
     R = rng.standard_normal((np.asarray(X).shape[1], n_components)) / np.sqrt(
         np.asarray(X).shape[1])
-    return np.asarray(X, dtype=float) @ R
+    return np.asarray(X) @ R
 
 
 def encoder_embeddings(X, weights):
@@ -147,9 +157,18 @@ def standardize(F_tr, F_te, clip=5.0):
     Every learned or pooled representation is scaled this way before the head
     sees it, so that the head's input scale does not depend on the arm. The
     clamp bounds the influence of a query spectrum far from the support.
+
+    The mean and the spread are taken in the array's own precision, as they were
+    in the benchmark. Widening to double first moves the scaled values by a few
+    parts in a million, which is not always negligible for a head fitted on a
+    handful of spectra.
     """
-    F_tr = np.asarray(F_tr, dtype=float)
-    F_te = np.asarray(F_te, dtype=float)
+    F_tr = np.asarray(F_tr)
+    F_te = np.asarray(F_te)
+    if not np.issubdtype(F_tr.dtype, np.floating):
+        F_tr = F_tr.astype(float)
+    if not np.issubdtype(F_te.dtype, np.floating):
+        F_te = F_te.astype(float)
     mu, sd = F_tr.mean(0), F_tr.std(0) + 1e-8
     return np.clip((F_tr - mu) / sd, -clip, clip), \
         np.clip((F_te - mu) / sd, -clip, clip)
@@ -161,8 +180,12 @@ def build(name, X):
     `name` is one of the twelve terms listed in the module docstring except
     `cars-selected`. Returns `(features, standardized)`, where the second value
     says whether the caller should standardise before fitting.
+
+    The caller's precision is not widened here. The spectra load in single
+    precision and every arm of the benchmark was evaluated on them as loaded;
+    the transforms below that need a particular dtype coerce it themselves.
     """
-    X = np.asarray(X, dtype=float)
+    X = np.asarray(X)
     if name in ("raw-spectra-512", "cars-selected"):
         return X, False
     if name.startswith("corpus-pca-"):

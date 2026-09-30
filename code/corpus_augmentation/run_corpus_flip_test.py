@@ -69,7 +69,7 @@ def main():
     print(f"[corpus-flip] device={device}", flush=True)
 
     d = load_fuel_raman("Benchtop")
-    X = np.asarray(d["X"], dtype=float)
+    X = np.asarray(d["X"])
     groups = np.asarray(d["groups"])
     simulated = np.load(DATA / "simulated-fuel" / "sim_spectra.npy")
     corpus = np.vstack([X, simulated])

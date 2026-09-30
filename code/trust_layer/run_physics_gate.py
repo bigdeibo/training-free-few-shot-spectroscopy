@@ -99,7 +99,7 @@ def main():
 
     for task in tasks:
         d = load_task(task)
-        X = np.asarray(d["X"], dtype=float)
+        X = np.asarray(d["X"])
         y = np.asarray(d["y"], dtype=np.float64)
         n = len(y)
         F = (corpus_pca(X, N_COMPONENTS) if args.representation.startswith("corpus")
